@@ -1,0 +1,59 @@
+//oled requirement
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#define OLED_RESET 4
+
+Adafruit_SSD1306 display(OLED_RESET);
+#define echoPin 2
+#define trigPin 3
+#define ir 7
+
+long duration;
+int distance;
+int ir_output;
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin , INPUT);
+  Serial.begin(115200);
+  Serial.println("Ultrasomic sensor test");
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  digitalWrite(trigPin, LOW);
+  delay(100);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delay(100);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance
+  distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  // Displays the distance on the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.print("distance : ");
+  display.println(distance);
+  
+
+  ir_output = digitalRead(ir);
+  Serial.println(ir_output);
+  if(ir_output == 0){
+      display.print("Object detected");
+    }else if(ir_output == 1){
+      display.println("no object");  
+    }
+  display.display();
+   display.clearDisplay();
+}
